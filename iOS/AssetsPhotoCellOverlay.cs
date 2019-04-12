@@ -40,8 +40,19 @@ namespace AssetsPicker.iOS
             }
         }
 
+        public AssetsPhotoCellOverlay() : base()
+        {
+            CommonInt();
+        }
+
+        public AssetsPhotoCellOverlay(CGRect frame) : base(frame)
+        {
+            CommonInt();
+        }
+
         private void CommonInt()
         {
+            //dim(animated: false, color: .white, alpha: 0.25)
             AddSubview(CountLabel);
             AddSubview(CheckMark);
 

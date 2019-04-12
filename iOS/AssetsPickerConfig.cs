@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using CoreGraphics;
+using Foundation;
 using Photos;
 using UIKit;
 
@@ -38,12 +39,15 @@ namespace AssetsPicker.iOS
         private CGSize _albumCacheSize = CGSize.Empty;
 
 
-        public CGSize AlbumForcedCacheSize { get; set; }
+        public CGSize? AlbumForcedCacheSize { get; set; }
         public CGSize AlbumCacheSize
         {
             get
             {
-                if (this.AlbumForcedCacheSize != null) return AlbumForcedCacheSize;
+                if (this.AlbumForcedCacheSize is CGSize forcedCacheSize)
+                {
+                    return forcedCacheSize;
+                }
                 else return _albumCacheSize;
             }
         }
@@ -68,7 +72,8 @@ namespace AssetsPicker.iOS
         public nfloat? AlbumLandscapeForcedCellHeight { get; set; }
         public CGSize AlbumLandscapeCellSize { get; set; } = CGSize.Empty;
 
-        nfloat AlbumItemSpace(bool isPortrait) {
+        nfloat AlbumItemSpace(bool isPortrait)
+        {
             var size = isPortrait ? UIScreen.MainScreen.GetPortraitSize() : UIScreen.MainScreen.GetLandscapeSize();
             var count = isPortrait ? (AlbumPortraitColumnCount ?? albumPortraitDefaultColumnCount) : AlbumLandscapeColumnCount ?? albumLandscapeDefaultColumnCount;
             var albumCellSize = isPortrait ? AlbumPortraitCellSize : AlbumLandscapeCellSize;
@@ -87,35 +92,44 @@ namespace AssetsPicker.iOS
         public IDictionary<PHAssetCollectionType, PHFetchOptions> AssetFetchOptions { get; set; }
 
         //    // MARK: Custom Layout
-        public Type assetCellType { get; set; } = typeof(AssetsPhotoCell);
-        //    private var _assetCacheSize: CGSize = .zero
-        //    open var assetForcedCacheSize: CGSize?
-        //    open var assetCacheSize: CGSize {
-        //        if let forcedCacheSize = self.assetForcedCacheSize {
-        //            return forcedCacheSize
-        //        } else {
-        //            return _assetCacheSize
-        //        }
-        //    }
-        //    open var assetPortraitColumnCount: Int = UI_USER_INTERFACE_IDIOM() == .pad? 5 : 4
-        //    open var assetPortraitInteritemSpace: CGFloat = 1
-        //    open var assetPortraitLineSpace: CGFloat = 1
+        public Type AssetCellType { get; set; } = typeof(AssetsPhotoCell);
+        private CGSize _assetCacheSize = CGSize.Empty;
+        public CGSize? assetForcedCacheSize;
+        public CGSize AssetCacheSize
+        {
+            get
+            {
+                if (assetForcedCacheSize is CGSize forcedCacheSize)
+                {
+                    return forcedCacheSize;
+                }
+                else
+                {
+                    return _assetCacheSize;
+                }
+            }
+        }
+        public int AssetPortraitColumnCount { get; set; } = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad ? 5 : 4;
+        public nfloat AssetPortraitInteritemSpace { get; set; } = 1;
+        public nfloat AssetPortraitLineSpace { get; set; } = 1;
 
-        //    func assetPortraitCellSize(forViewSize size: CGSize) -> CGSize {
-        //        let count = CGFloat(self.assetPortraitColumnCount)
-        //        let edge = (size.width - (count - 1) * self.assetPortraitInteritemSpace) / count
-        //        return CGSize(width: edge, height: edge)
-        //    }
+        CGSize AssetPortraitCellSize(CGSize size)
+        {
+            var count = this.AssetPortraitColumnCount;
+            var edge = (size.Width - (count - 1) * this.AssetPortraitInteritemSpace) / count;
+            return new CGSize(width: edge, height: edge);
+        }
 
-        //    open var assetLandscapeColumnCount: Int = 7
-        //    open var assetLandscapeInteritemSpace: CGFloat = 1.5
-        //    open var assetLandscapeLineSpace: CGFloat = 1.5
+        public int AssetLandscapeColumnCount { get; set; } = 7;
+        public nfloat AssetLandscapeInteritemSpace { get; set; } = 1.5f;
+        public nfloat AssetLandscapeLineSpace { get; set; } = 1.5f;
 
-        //    func assetLandscapeCellSize(forViewSize size: CGSize) -> CGSize {
-        //        let count = CGFloat(self.assetLandscapeColumnCount)
-        //        let edge = (size.width - (count - 1) * self.assetLandscapeInteritemSpace) / count
-        //        return CGSize(width: edge, height: edge)
-        //    }
+        CGSize AssetLandscapeCellSize(CGSize size)
+        {
+            var count = this.AssetLandscapeColumnCount;
+            var edge = (size.Width - (count - 1) * this.AssetLandscapeInteritemSpace) / count;
+            return new CGSize(width: edge, height: edge);
+        }
 
         AssetsPickerConfig()
         {
@@ -123,68 +137,70 @@ namespace AssetsPicker.iOS
         }
 
         //@discardableResult
-        //open func prepare() -> Self {
+        AssetsPickerConfig Prepare()
+        {
 
-        //        let scale = UIScreen.main.scale
+            var scale = UIScreen.MainScreen.Scale;
 
-        //        /* initialize album attributes */
+            /* initialize album attributes */
 
-        //        // album line space
-        //        if albumLineSpace< 0 {
-        //            albumLineSpace = albumDefaultSpace
-        //        }
+            // album line space
+            if (AlbumLineSpace < 0)
+            {
+                AlbumLineSpace = AlbumDefaultSpace;
+            }
 
-        //        // initialize album cell size
-        //        let albumPortraitCount = CGFloat(albumPortraitColumnCount ?? albumPortraitDefaultColumnCount)
-        //        let albumPortraitWidth = (UIScreen.main.portraitSize.width - albumDefaultSpace * (albumPortraitCount + 1)) / albumPortraitCount
-        //        albumPortraitCellSize = CGSize(
-        //            width: albumPortraitForcedCellWidth ?? albumPortraitWidth,
-        //            height: albumPortraitForcedCellHeight ?? albumPortraitWidth* 1.25
-        //        )
-
-
-        //        let albumLandscapeCount = CGFloat(albumLandscapeColumnCount ?? albumLandscapeDefaultColumnCount)
-        //        var albumLandscapeWidth: CGFloat = 0
-        //        if let _ = albumPortraitColumnCount {
-        //            albumLandscapeWidth = (UIScreen.main.landscapeSize.width - albumDefaultSpace* (albumLandscapeCount + 1)) / albumLandscapeCount
-        //        } else {
-        //            albumLandscapeWidth = albumPortraitWidth
-        //        }
-        //        albumLandscapeCellSize = CGSize(
-        //            width: albumLandscapeForcedCellWidth ?? albumLandscapeWidth,
-        //            height: albumLandscapeForcedCellHeight ?? albumLandscapeWidth* 1.25
-        //        )
-
-        //        // initialize cache size for album thumbnail
-        //_albumCacheSize = CGSize(width: albumPortraitWidth* scale, height: albumPortraitWidth* scale)
+            //        // initialize album cell size
+            var albumPortraitCount = AlbumPortraitColumnCount ?? albumPortraitDefaultColumnCount;
+            var albumPortraitWidth = (UIScreen.MainScreen.GetPortraitSize().Width - AlbumDefaultSpace * (albumPortraitCount + 1)) / albumPortraitCount;
+            AlbumPortraitCellSize = new CGSize(
+                width: AlbumPortraitForcedCellWidth ?? albumPortraitWidth,
+                height: AlbumPortraitForcedCellHeight ?? albumPortraitWidth * 1.25
+            );
 
 
-        //        /* initialize asset attributes */
+            var albumLandscapeCount = AlbumLandscapeColumnCount ?? albumLandscapeDefaultColumnCount;
+            nfloat albumLandscapeWidth = 0;
+            if (AlbumPortraitColumnCount != null) {
+                albumLandscapeWidth = (UIScreen.MainScreen.GetLandscapeSize().Width - AlbumDefaultSpace * (albumLandscapeCount + 1)) / albumLandscapeCount;
+            } else {
+                albumLandscapeWidth = albumPortraitWidth;
+            }
+            AlbumLandscapeCellSize = new CGSize(
+                width: AlbumLandscapeForcedCellWidth ?? albumLandscapeWidth,
+                height: AlbumLandscapeForcedCellHeight ?? albumLandscapeWidth * 1.25
+            );
 
-        //// initialize cache size for asset thumbnail
-        //let assetPivotCount = CGFloat(assetPortraitColumnCount)
-        //    let assetWidth = (UIScreen.main.portraitSize.width - (assetPivotCount - 1) * assetPortraitInteritemSpace) / assetPivotCount
+            // initialize cache size for album thumbnail
+            _albumCacheSize = new CGSize(width: albumPortraitWidth * scale, height: albumPortraitWidth * scale);
 
 
-        //    _assetCacheSize = CGSize(width: assetWidth* scale, height: assetWidth* scale)
+            //        /* initialize asset attributes */
 
-        //    // asset fetch options by default
-        //    if assetFetchOptions == nil {
-        //        let options = PHFetchOptions()
-        //        options.includeHiddenAssets = albumIsShowHiddenAlbum
-        //        options.sortDescriptors = [
-        //            NSSortDescriptor(key: "creationDate", ascending: true),
-        //            NSSortDescriptor(key: "modificationDate", ascending: true)
-        //        ]
-        //        options.predicate = NSPredicate(format: "mediaType = %d OR mediaType = %d", PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue)
-        //        assetFetchOptions = [
-        //            .smartAlbum: options,
-        //            .album: options,
-        //            .moment: options
-        //        ]
-        //    }
+            //// initialize cache size for asset thumbnail
+            var assetPivotCount = AssetPortraitColumnCount;
+            var assetWidth = (UIScreen.MainScreen.GetPortraitSize().Width - (assetPivotCount - 1) * AssetPortraitInteritemSpace) / assetPivotCount;
 
-        //    return self
-        //}
+
+            _assetCacheSize = new CGSize(width: assetWidth * scale, height: assetWidth * scale);
+
+            // asset fetch options by default
+            if (AssetFetchOptions == null) {
+                var options = new PHFetchOptions();
+                options.IncludeHiddenAssets = AlbumIsShowHiddenAlbum;
+                options.SortDescriptors = new NSSortDescriptor[] {
+                    new NSSortDescriptor(key: "creationDate", ascending: true),
+                    new NSSortDescriptor(key: "modificationDate", ascending: true)
+                };
+                options.Predicate = NSPredicate.FromFormat($"mediaType = {PHAssetMediaType.Image} OR mediaType = {PHAssetMediaType.Video}");
+                AssetFetchOptions = new Dictionary<PHAssetCollectionType, PHFetchOptions>() {
+                    { PHAssetCollectionType.SmartAlbum, options },
+                    { PHAssetCollectionType.Album, options },
+                    { PHAssetCollectionType.Moment, options }
+                };
+            }
+
+            return this;
+        }
     }
 }
