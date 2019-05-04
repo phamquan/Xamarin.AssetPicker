@@ -23,6 +23,8 @@ namespace AssetsPicker.iOS
         private PHAsset asset;
         private bool isSelected;
         private bool isVideo;
+        private int count = 0;
+        private double duration = 0;
 
         public PHAsset Asset
         {
@@ -53,41 +55,45 @@ namespace AssetsPicker.iOS
 
             }
         }
-        public UIImageView ImageView { get; }
-        public int Count { get; set; }
-        public TimeInterval Duration { get; set; }
-
-        private UILabel DurationLabel
+        public UIImageView ImageView { get; } = new UIImageView
         {
-            get
+            BackgroundColor = new UIColor(red: 0.94f, green: 0.94f, blue: 0.94f, alpha: 1.0f),
+            ContentMode = UIViewContentMode.ScaleAspectFill,
+            ClipsToBounds = true
+        };
+
+        public int Count
+        {
+            get => count; set
             {
-                var label = new UILabel();
-                label.TextColor = UIColor.White;
-                label.TextAlignment = UITextAlignment.Right;
-                label.Font = UIFontExtensions.GetSystemFont(UIFontTextStyle.Caption1);
-                return label;
+                count = value;
+                Overlay.CountLabel.Text = $"{count}";
             }
         }
-
-        private PanoramaIconView PanoramaIconView
+        public TimeInterval Duration
         {
-            get
+            get => duration; set
             {
-                var view = new PanoramaIconView();
-                view.Hidden = true;
-                return view;
+                duration = value;
+                DurationLabel.Text = $"{duration}";
             }
         }
-
-        private AssetsPhotoCellOverlay Overlay
+        private UILabel DurationLabel { get; } = new UILabel
         {
-            get
-            {
-                var overlay = new AssetsPhotoCellOverlay();
-                overlay.Hidden = true;
-                return overlay;
-            }
-        }
+            TextColor = UIColor.White,
+            TextAlignment = UITextAlignment.Right,
+            Font = UIFontExtensions.GetSystemFont(UIFontTextStyle.Caption1)
+        };
+
+        private PanoramaIconView PanoramaIconView { get; } = new PanoramaIconView
+        {
+            Hidden = true
+        };
+
+        private AssetsPhotoCellOverlay Overlay { get; } = new AssetsPhotoCellOverlay
+        {
+            Hidden = true
+        };
 
         public AssetsPhotoCell()
         {
@@ -95,6 +101,11 @@ namespace AssetsPicker.iOS
         }
 
         public AssetsPhotoCell(CGRect frame) : base(frame)
+        {
+            CommonInit();
+        }
+
+        protected internal AssetsPhotoCell(IntPtr handle) : base(handle)
         {
             CommonInit();
         }

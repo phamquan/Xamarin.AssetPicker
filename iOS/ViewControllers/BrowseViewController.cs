@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
-
+using System.Diagnostics;
 using Foundation;
+using Photos;
 using UIKit;
 
 namespace AssetsPicker.iOS
@@ -87,6 +88,58 @@ namespace AssetsPicker.iOS
         void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             InvokeOnMainThread(() => TableView.ReloadData());
+        }
+
+        partial void AddClick(NSObject sender)
+        {
+            var picker = new AssetsPickerViewController();
+            picker.PickerDelegate = new WeakReference<IAssetsPickerViewControllerDelegate>(this);
+            PresentViewController(picker, true, null);
+        }
+    }
+
+    partial class BrowseViewController : IAssetsPickerViewControllerDelegate
+    {
+        public void CannotAccessPhotoLibrary(AssetsPickerViewController controller)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DidCancel(AssetsPickerViewController controller)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DidDeselect(AssetsPickerViewController controller, PHAsset asset, NSIndexPath atIndexPath)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DidDismissByCancelling(AssetsPickerViewController controller, bool byCancel)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DidSelectAsset(AssetsPickerViewController controller, PHAsset asset, NSIndexPath atIndexPath)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void SelectedAssets(AssetsPickerViewController controller, PHAsset[] assets)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public bool ShouldDeselectAssets(AssetsPickerViewController controller, PHAsset asset, NSIndexPath atIndexPath)
+        {
+            //throw new NotImplementedException();
+            return true;
+        }
+
+        public bool ShouldSelectAsset(AssetsPickerViewController controller, PHAsset asset, NSIndexPath atIndexPath)
+        {
+            //throw new NotImplementedException();
+            return true;
         }
     }
 

@@ -149,6 +149,15 @@
     <Compile Include="PanoramaIconView.cs" />
     <Compile Include="AssetsPhotoCellOverlay.cs" />
     <Compile Include="SSCheckMark.cs" />
+    <Compile Include="AssetsEmptyView.cs" />
+    <Compile Include="AssetsGuideView.cs" />
+    <Compile Include="AssetsNoPermissionView.cs" />
+    <Compile Include="AssetsPhotoLayout.cs" />
+    <Compile Include="AssetsPhotoFooterView.cs" />
+    <Compile Include="iOSDevice.cs" />
+    <Compile Include="AssetsManager+Sync.cs" />
+    <Compile Include="AssetsAlbumViewController.cs" />
+    <Compile Include="DeviceExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

@@ -15,7 +15,7 @@ namespace AssetsPicker.iOS
         public static UIColor DefaultCheckmarkColor { get; set; } = new UIColor(red: 0.078f, green: 0.435f, blue: 0.875f, alpha: 1.0f);
 
         //    /// Set selected album at initial load.
-        public PHAssetCollectionSubtype albumDefaultType { get; set; } = PHAssetCollectionSubtype.SmartAlbumUserLibrary;
+        public PHAssetCollectionSubtype AlbumDefaultType { get; set; } = PHAssetCollectionSubtype.SmartAlbumUserLibrary;
         //    /// true: shows empty albums, false: hides empty albums
         public bool AlbumIsShowEmptyAlbum { get; set; } = true;
         //    /// true: shows "Hidden" album, false: hides "Hidden" album
@@ -113,7 +113,7 @@ namespace AssetsPicker.iOS
         public nfloat AssetPortraitInteritemSpace { get; set; } = 1;
         public nfloat AssetPortraitLineSpace { get; set; } = 1;
 
-        CGSize AssetPortraitCellSize(CGSize size)
+        public CGSize AssetPortraitCellSize(CGSize size)
         {
             var count = this.AssetPortraitColumnCount;
             var edge = (size.Width - (count - 1) * this.AssetPortraitInteritemSpace) / count;
@@ -124,20 +124,17 @@ namespace AssetsPicker.iOS
         public nfloat AssetLandscapeInteritemSpace { get; set; } = 1.5f;
         public nfloat AssetLandscapeLineSpace { get; set; } = 1.5f;
 
-        CGSize AssetLandscapeCellSize(CGSize size)
+        public CGSize AssetLandscapeCellSize(CGSize size)
         {
             var count = this.AssetLandscapeColumnCount;
             var edge = (size.Width - (count - 1) * this.AssetLandscapeInteritemSpace) / count;
             return new CGSize(width: edge, height: edge);
         }
 
-        AssetsPickerConfig()
-        {
-
-        }
+        public AssetsPickerConfig() { }
 
         //@discardableResult
-        AssetsPickerConfig Prepare()
+        public AssetsPickerConfig Prepare()
         {
 
             var scale = UIScreen.MainScreen.Scale;
@@ -192,7 +189,7 @@ namespace AssetsPicker.iOS
                     new NSSortDescriptor(key: "creationDate", ascending: true),
                     new NSSortDescriptor(key: "modificationDate", ascending: true)
                 };
-                options.Predicate = NSPredicate.FromFormat($"mediaType = {PHAssetMediaType.Image} OR mediaType = {PHAssetMediaType.Video}");
+                options.Predicate = NSPredicate.FromFormat($"mediaType = {(int)PHAssetMediaType.Image} OR mediaType = {(int)PHAssetMediaType.Video}");
                 AssetFetchOptions = new Dictionary<PHAssetCollectionType, PHFetchOptions>() {
                     { PHAssetCollectionType.SmartAlbum, options },
                     { PHAssetCollectionType.Album, options },

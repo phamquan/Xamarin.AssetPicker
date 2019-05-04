@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Foundation;
 using Photos;
 using UIKit;
 
 namespace AssetsPicker.iOS
 {
-    
-    public interface IAssetsPickerViewControllerDelegate {
+
+    public interface IAssetsPickerViewControllerDelegate
+    {
         void DidCancel(AssetsPickerViewController controller);
         void CannotAccessPhotoLibrary(AssetsPickerViewController controller);
         void SelectedAssets(AssetsPickerViewController controller, PHAsset[] assets);
@@ -17,61 +20,70 @@ namespace AssetsPicker.iOS
         void DidDismissByCancelling(AssetsPickerViewController controller, bool byCancel);
     }
 
-public class AssetsPickerViewController : UINavigationController
+    public class AssetsPickerViewController : UINavigationController
     {
 
         public WeakReference<IAssetsPickerViewControllerDelegate> PickerDelegate;
-        //            open var selectedAssets: [PHAsset] {
-        //        return photoViewController.selectedAssets
-        //    }
+        private AssetsPickerConfig pickerConfig;
 
-        //    open var isShowLog: Bool = false
-        //    public var pickerConfig: AssetsPickerConfig! {
-        //        didSet {
-        //            if let config = self.pickerConfig?.prepare() {
-        //                AssetsManager.shared.pickerConfig = config
-        //                photoViewController?.pickerConfig = config
-        //}
-        //        }
-        //    }
+        public IList<PHAsset> SelectedAssets
+        {
+            get
+            {
+                return PhotoViewController.SelectedAssets;
+            }
+        }
 
-        //    public private (set) var photoViewController: AssetsPhotoViewController!
+        public bool IsShowLog { get; set; } = false;
+        public AssetsPickerConfig PickerConfig
+        {
+            get => pickerConfig; set
+            {
+                pickerConfig = value;
+                if (this.PickerConfig != null && PickerConfig.Prepare() is AssetsPickerConfig config )
+                {
+                    AssetsManager.Shared.PickerConfig = config;
+                    PhotoViewController.PickerConfig = config;
+                }
+            }
+        }
 
-        //    required public init? (coder aDecoder: NSCoder) {
-        //        super.init(coder: aDecoder)
-        //        commonInit()
-        //    }
+        public AssetsPhotoViewController PhotoViewController { get; private set; }
 
-        //    override public init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?)
-        //{
-        //    super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        //        commonInit()
-        //    }
+        public AssetsPickerViewController(NSCoder coder) : base(coder)
+        {
+            CommonInit();
+        }
 
-        //public convenience init()
-        //{
-        //    self.init(nibName: nil, bundle: nil)
-        //    }
+        public AssetsPickerViewController(string nibName, NSBundle bundle) : base(nibName, bundle)
+        {
+            CommonInit();
+        }
 
-        //func commonInit()
-        //{
-        //    let config = AssetsPickerConfig().prepare()
-        //        self.pickerConfig = config
-        //        AssetsManager.shared.pickerConfig = config
-        //        let controller = AssetsPhotoViewController()
-        //        controller.pickerConfig = config
-        //        self.photoViewController = controller
+        public AssetsPickerViewController() : this(null, null)
+        {
+        }
+
+        void CommonInit()
+        {
+            var config = new AssetsPickerConfig().Prepare();
+            this.pickerConfig = config;
+            AssetsManager.Shared.PickerConfig = config;
+            var controller = new AssetsPhotoViewController();
+            controller.PickerConfig = config;
+            this.PhotoViewController = controller;
 
 
-        //        TinyLog.isShowInfoLog = isShowLog
-        //        TinyLog.isShowErrorLog = isShowLog
-        //        AssetsManager.shared.registerObserver()
-        //        viewControllers = [photoViewController]
-        //    }
+            //TinyLog.isShowInfoLog = isShowLog
+            //TinyLog.isShowErrorLog = isShowLog
+            AssetsManager.Shared.RegisterObserver();
+            ViewControllers = new UIViewController[] { PhotoViewController };
+            }
 
-        //deinit {
-        //    AssetsManager.shared.clear()
-        //    logd("Released \(type(of: self))")
-        //}
+        ~AssetsPickerViewController()
+        {
+            AssetsManager.Shared.Clear();
+            Debug.WriteLine("Release");
+        }
     }
 }

@@ -20,5 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemDetailViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CollectionsExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NSObjectConverter.cs" />
   </ItemGroup>
 </Project>
