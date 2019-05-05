@@ -11,7 +11,7 @@ namespace AssetsPicker.iOS
     public interface IAssetsPhotoCellProtocol
     {
         PHAsset Asset { get; set; }
-        bool IsSelected { get; set; }
+        bool Selected { get; set; }
         bool IsVideo { get; set; }
         UIImageView ImageView { get; }
         int Count { get; set; }
@@ -21,7 +21,6 @@ namespace AssetsPicker.iOS
     public class AssetsPhotoCell : UICollectionViewCell, IAssetsPhotoCellProtocol
     {
         private PHAsset asset;
-        private bool isSelected;
         private bool isVideo;
         private int count = 0;
         private double duration = 0;
@@ -36,13 +35,16 @@ namespace AssetsPicker.iOS
                 //}
             }
         }
-        public bool IsSelected
+
+        public override bool Selected
         {
-            get => isSelected; set
+            get => base.Selected; set
             {
-                isSelected = value;
+                base.Selected = value;
+                Overlay.Hidden = !Selected;
             }
         }
+
         public bool IsVideo
         {
             get => isVideo; set

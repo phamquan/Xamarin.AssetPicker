@@ -592,13 +592,23 @@ namespace AssetsPicker.iOS
         [Export("collectionView:shouldDeselectItemAtIndexPath:")]
         public bool ShouldDeselectItem(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            throw new System.NotImplementedException();
+            if (Delegate != null)
+            {
+                return Delegate.ShouldDeselectAssets(Picker, AssetsManager.Shared.AssetArray[indexPath.Row], indexPath);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         [Export("collectionView:didDeselectItemAtIndexPath:")]
         public void ItemDeselected(UICollectionView collectionView, NSIndexPath indexPath)
         {
-            throw new System.NotImplementedException();
+            var asset = AssetsManager.Shared.AssetArray[indexPath.Row];
+            Deselect(asset, indexPath);
+            UpdateNavigationStatus();
+            Delegate?.DidDeselect(Picker, asset, indexPath);
         }
     }
     #endregion

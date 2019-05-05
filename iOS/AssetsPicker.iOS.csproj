@@ -158,6 +158,9 @@
     <Compile Include="AssetsManager+Sync.cs" />
     <Compile Include="AssetsAlbumViewController.cs" />
     <Compile Include="DeviceExtensions.cs" />
+    <Compile Include="AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />
@@ -173,6 +176,12 @@
       <Project>{48BFC12D-2A56-4385-A361-BB0D1C1921E5}</Project>
       <Name>SnapKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="..\AssetsPicker\AssetsPicker.projitems" Label="Shared" Condition="Exists('..\AssetsPicker\AssetsPicker.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

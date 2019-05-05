@@ -45,19 +45,19 @@ namespace AssetsPicker.iOS
         {
             //dim(animated: false, color: .white, alpha: 0.25)
             AddSubview(CountLabel);
-            //AddSubview(CheckMark);
+            AddSubview(CheckMark);
 
             CountLabel.Snap().MakeConstraints((make) =>
             {
                 make.Edges.EqualToSuperview();
             });
 
-            //CheckMark.Snap().MakeConstraints((make) =>
-            //{
-            //    make.Size.EqualTo(new CGSize(30, 30));
-            //    make.Bottom.EqualToSuperview().Inset(1);
-            //    make.Trailing.EqualToSuperview().Inset(1);
-            //});
+            CheckMark.Snap().MakeConstraints((make) =>
+            {
+                make.Size.EqualTo(new CGSize(30, 30));
+                make.Bottom.EqualToSuperview().Inset(1);
+                make.Trailing.EqualToSuperview().Inset(1);
+            });
         }
 
     }
