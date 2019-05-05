@@ -22,7 +22,7 @@ namespace AssetsPicker.iOS
 
         // MARK: Properties
         internal AssetsPickerConfig PickerConfig { get; set; }
-        private UIViewControllerPreviewingDelegate Previewing { get; set; }
+        private IUIViewControllerPreviewing Previewing { get; set; }
 
         private readonly string cellReuseIdentifier = new NSUuid().AsString();
         private string CellReuseIdentifier => cellReuseIdentifier;
@@ -230,6 +230,53 @@ namespace AssetsPicker.iOS
             UpdateLayout(CollectionView.CollectionViewLayout, isPortrait);
         }
 
+        public override void ViewWillAppear(bool animated)
+        {
+            base.ViewWillAppear(animated);
+            UpdateNavigationStatus();
+        }
+
+        public override void ViewDidAppear(bool animated)
+        {
+            base.ViewDidAppear(animated);
+
+            SetupGestureRecognizer();
+            if (TraitCollection.ForceTouchCapability == UIForceTouchCapability.Available)
+            {
+                Previewing = RegisterForPreviewingWithDelegate(this, CollectionView);
+            }
+        }
+
+        private void SetupGestureRecognizer()
+        {
+            if (TapGesture == null)
+            {
+                var gesture = new UITapGestureRecognizer(PressedTitle);
+                NavigationController.NavigationBar.AddGestureRecognizer(gesture);
+                gesture.Delegate = this;
+                TapGesture = gesture;
+            }
+        }
+
+        public override void ViewDidDisappear(bool animated)
+        {
+            base.ViewDidDisappear(animated);
+            RemoveGestureRecognizer();
+            if (Previewing != null)
+            {
+                UnregisterForPreviewingWithContext(Previewing);
+                this.Previewing = null;
+            }
+        }
+
+        private void RemoveGestureRecognizer()
+        {
+            if (TapGesture != null)
+            {
+                NavigationController.NavigationBar.RemoveGestureRecognizer(TapGesture);
+                TapGesture = null;
+            }
+        }
     }
     #endregion
 
@@ -561,6 +608,24 @@ namespace AssetsPicker.iOS
     #endregion
 
     #region UIScrollViewDelegate
+
+    partial class AssetsPhotoViewController : IUIGestureRecognizerDelegate
+    {
+        [Export("gestureRecognizer:shouldReceiveTouch:")]
+        public bool ShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
+        {
+            var navigationBar = NavigationController?.NavigationBar;
+            if (navigationBar == null) return false;
+
+            var point = touch.LocationInView(navigationBar);
+            // Ignore touches on navigation buttons on both sides.
+            return point.X > navigationBar.Bounds.Width / 4 && point.X < navigationBar.Bounds.Width * 3 / 4;
+        }
+    }
+
+    #endregion
+
+    #region UIScrollViewDelegate
     partial class AssetsPhotoViewController : IUIScrollViewDelegate
     {
         [Export("scrollViewDidScroll:")]
@@ -647,7 +712,7 @@ namespace AssetsPicker.iOS
                 }
                 return cell;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
 
@@ -705,7 +770,7 @@ namespace AssetsPicker.iOS
 
                 RegisterFetching(requestId, indexPath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
@@ -885,6 +950,24 @@ namespace AssetsPicker.iOS
         public void UpdatedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    #endregion
+
+    #region UIViewControllerPreviewingDelegate
+
+    partial class AssetsPhotoViewController : IUIViewControllerPreviewingDelegate
+    {
+        public void CommitViewController(IUIViewControllerPreviewing previewingContext, UIViewController viewControllerToCommit)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public UIViewController GetViewControllerForPreview(IUIViewControllerPreviewing previewingContext, CGPoint location)
+        {
+            //throw new NotImplementedException();
+            return new UIViewController();
         }
     }
 
