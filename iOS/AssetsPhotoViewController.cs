@@ -474,8 +474,15 @@ namespace AssetsPicker.iOS
             var imageCount = counts.Item1;
             var videoCount = counts.Item2;
 
+            var titleString = this.TitleForAlbum(AssetsManager.Shared.SelectedAlbum);
+
             //TODO: Localize
-            Title = $"{imageCount} image, {videoCount} video";
+            if (imageCount > 0 || videoCount > 0)
+            {
+                titleString = $"{imageCount} image, {videoCount} video";
+            }
+
+            Title = titleString;
         }
 
         void UpdateFooter()

@@ -23,7 +23,7 @@ namespace AssetsPicker.iOS
             TextColor = UIColor.White,
             AdjustsFontSizeToFitWidth = true,
             Font = UIFontExtensions.GetSystemFont(UIFontTextStyle.Subheadline),
-            Hidden = true
+            Hidden = false
         };
 
         SSCheckMark CheckMark

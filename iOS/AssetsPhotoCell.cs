@@ -69,7 +69,7 @@ namespace AssetsPicker.iOS
             get => count; set
             {
                 count = value;
-                Overlay.CountLabel.Text = $"{count}";
+                Overlay.Count = value;
             }
         }
         public TimeInterval Duration
