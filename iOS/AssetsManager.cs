@@ -260,7 +260,7 @@ namespace AssetsPicker.iOS
                 {
                     ImageManager.RequestImageForAsset(asset, size, PHImageContentMode.AspectFill, null, (image, info) =>
                     {
-                        var isDegraded = Convert.ToBoolean(info[PHImageKeys.ResultIsDegraded]);
+                        var isDegraded = NSObjectConverter.ToBool(info[PHImageKeys.ResultIsDegraded]);
                         if (!isNeedDegraded && isDegraded)
                         {
                             return;
@@ -540,6 +540,7 @@ namespace AssetsPicker.iOS
                     SortedAlbumsArray.Add(momentEntry.sortedAlumbs);
                     AlbumsFetchArray.Add(momentEntry.fetchResult);
                 }
+                IsFetchedAlbums = true;
             }
             completion?.Invoke(SortedAlbumsArray);
         }

@@ -76,5 +76,17 @@ namespace AssetsPicker.iOS {
                 return ResourceManager.GetString("Title_No_Items", resourceCulture);
             }
         }
+        
+        internal static string Title_Albums {
+            get {
+                return ResourceManager.GetString("Title_Albums", resourceCulture);
+            }
+        }
+        
+        internal static string Title_Section_MyAlbums {
+            get {
+                return ResourceManager.GetString("Title_Section_MyAlbums", resourceCulture);
+            }
+        }
     }
 }

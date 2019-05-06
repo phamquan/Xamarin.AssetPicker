@@ -161,6 +161,9 @@
     <Compile Include="AppResources.Designer.cs">
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="AssetsAlbumLayout.cs" />
+    <Compile Include="AssetsAlbumHeaderView.cs" />
+    <Compile Include="IAssetsAlbumCellProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Entitlements.plist" />

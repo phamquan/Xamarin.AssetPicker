@@ -31,4 +31,10 @@
     <data name="Title_No_Items" xml:space="preserve">
         <value>No Photos or Videos</value>
     </data>
+    <data name="Title_Albums" xml:space="preserve">
+        <value>Albums</value>
+    </data>
+    <data name="Title_Section_MyAlbums" xml:space="preserve">
+        <value>My Albums</value>
+    </data>
 </root>

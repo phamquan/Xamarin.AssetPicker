@@ -72,7 +72,7 @@ namespace AssetsPicker.iOS
         public nfloat? AlbumLandscapeForcedCellHeight { get; set; }
         public CGSize AlbumLandscapeCellSize { get; set; } = CGSize.Empty;
 
-        nfloat AlbumItemSpace(bool isPortrait)
+        public nfloat AlbumItemSpace(bool isPortrait)
         {
             var size = isPortrait ? UIScreen.MainScreen.GetPortraitSize() : UIScreen.MainScreen.GetLandscapeSize();
             var count = isPortrait ? (AlbumPortraitColumnCount ?? albumPortraitDefaultColumnCount) : AlbumLandscapeColumnCount ?? albumLandscapeDefaultColumnCount;
