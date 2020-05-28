@@ -22,7 +22,7 @@ namespace AssetsPicker.iOS
                 var section = i.Key;
                 var albumsFetchResult = i.Value;
                 var updatedIndexSet = new NSMutableIndexSet();
-                updatedIndexSets.Append(updatedIndexSet);
+                updatedIndexSets.Add(updatedIndexSet);
 
                 var albumsChangeDetail = changeInstance.GetFetchResultChangeDetails(albumsFetchResult);
                 if (albumsChangeDetail == null) continue;
@@ -76,11 +76,11 @@ namespace AssetsPicker.iOS
 
                 foreach (var album in albums)
                 {
-                    Debug.WriteLine($"Looping album: {album.LocalIdentifier}");
+                    Debug.WriteLine($"Looping album: {album.LocalizedTitle}");
 
                     var fetchResult = fetchMapBeforeChanges[album.LocalIdentifier];
                     var assetsChangeDetails = changeInstance.GetFetchResultChangeDetails(fetchResult);
-                    if (fetchResult != null || assetsChangeDetails != null)
+                    if (fetchResult == null || assetsChangeDetails == null)
                     {
                         continue;
                     }
@@ -126,7 +126,7 @@ namespace AssetsPicker.iOS
                         var removeAssets = new List<PHAsset>();
                         foreach (var removedIndex in removedIndexes.Reverse())
                         {
-                            removeAssets.Insert(0, assetArray.RemoveAndGet(removedIndex.Row));
+                            removeAssets.Insert(0, AssetArray.RemoveAndGet(removedIndex.Row));
                         }
                         // stop caching for removed assets
                         StopCache(removeAssets.ToArray(), PickerConfig.AssetCacheSize);
@@ -142,8 +142,8 @@ namespace AssetsPicker.iOS
                         foreach (var insertedIndex in insertedIndexes)
                         {
                             var insertedAsset = assetsChangeDetails.FetchResultAfterChanges[insertedIndex.Row] as PHAsset;
-                            insertedAssets.Append(insertedAsset);
-                            assetArray.Insert(insertedIndex.Row, insertedAsset);
+                            insertedAssets.Add(insertedAsset);
+                            AssetArray.Insert(insertedIndex.Row, insertedAsset);
                         }
                         // stop caching for removed assets
                         Cache(insertedAssets.ToArray(), PickerConfig.AssetCacheSize);
@@ -151,19 +151,19 @@ namespace AssetsPicker.iOS
                     }
 
                     // sync updated assets
-                    var updatedIndexes = assetsChangeDetails.ChangedIndexes.AsArray();
+                    var updatedIndexes = assetsChangeDetails.ChangedIndexes;
                     if (updatedIndexes != null)
                     {
                         var updatedAssets = new List<PHAsset>();
-                        foreach (var updatedIndex in updatedIndexes)
+                        foreach (var updatedIndex in updatedIndexes.AsArray())
                         {
                             var updatedAsset = assetsChangeDetails.FetchResultAfterChanges[updatedIndex.Row] as PHAsset;
-                            updatedAssets.Append(updatedAsset);
+                            updatedAssets.Add(updatedAsset);
                         }
                         // stop caching for removed assets
                         Cache(updatedAssets.ToArray(), PickerConfig.AssetCacheSize);
                         StopCache(updatedAssets.ToArray(), PickerConfig.AssetCacheSize);
-                        NotifySubscribers((_) => _.UpdatedAssets(this, updatedAssets.ToArray(), updatedIndexes.ToArray()), updatedAssets.Count > 0);
+                        NotifySubscribers((_) => _.UpdatedAssets(this, updatedAssets.ToArray(), updatedIndexes.AsArray()), updatedAssets.Count > 0);
                     }
                 }
 
@@ -215,8 +215,8 @@ namespace AssetsPicker.iOS
             {
                 if (!newAlbums.Contains(item.Value))
                 {
-                    removedAlbums.Append(item.Value);
-                    removedIndexPaths.Append(NSIndexPath.FromRowSection(item.Index, section));
+                    removedAlbums.Add(item.Value);
+                    removedIndexPaths.Add(NSIndexPath.FromRowSection(item.Index, section));
                     continue;
                 }
             }
@@ -233,8 +233,8 @@ namespace AssetsPicker.iOS
             {
                 if (!newAlbums.Contains(item.Value))
                 {
-                    insertedAlbums.Append(item.Value);
-                    insertedIndexPaths.Append(NSIndexPath.FromRowSection(item.Index, section));
+                    insertedAlbums.Add(item.Value);
+                    insertedIndexPaths.Add(NSIndexPath.FromRowSection(item.Index, section));
                     continue;
                 }
             }

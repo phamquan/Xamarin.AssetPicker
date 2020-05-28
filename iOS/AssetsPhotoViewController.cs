@@ -534,11 +534,18 @@ namespace AssetsPicker.iOS
 
         void UpdateFooter()
         {
-            if (CollectionView.GetVisibleSupplementaryViews(UICollectionElementKindSectionKey.Footer).Last() is AssetsPhotoFooterView footerView)
+            try
             {
-                footerView.Set(AssetsManager.Shared.CountOfType(PHAssetMediaType.Image), AssetsManager.Shared.CountOfType(PHAssetMediaType.Video));
+                if (CollectionView.GetVisibleSupplementaryViews(UICollectionElementKindSectionKey.Footer).Last() is AssetsPhotoFooterView footerView)
+                {
+                    footerView.Set(AssetsManager.Shared.CountOfType(PHAssetMediaType.Image), AssetsManager.Shared.CountOfType(PHAssetMediaType.Video));
+                }
+                else
+                {
+                    return;
+                }
             }
-            else
+            catch(Exception ex)
             {
                 return;
             }
@@ -924,7 +931,8 @@ namespace AssetsPicker.iOS
         {
             var indexPathDescription = String.Join(",", indexPaths.Select(_ => $"[{_.Section}, {_.Row}]"));
             Debug.WriteLine($"insertedAssets at: {indexPathDescription}");
-            CollectionView.InsertItems(indexPaths);
+            //CollectionView.InsertItems(indexPaths);
+            CollectionView.ReloadData();
             UpdateFooter();
         }
 
@@ -934,22 +942,42 @@ namespace AssetsPicker.iOS
 
         public void RemovedAlbums(AssetsManager manager, PHAssetCollection[] albums, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            var selectedAlbum = manager.SelectedAlbum;
+            if (selectedAlbum == null) return;
+            if (albums.Contains(selectedAlbum))
+            {
+                Select(manager.DefaultAlbum ?? manager.CameraRollAlbum);
+            }
         }
 
         public void RemovedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            foreach (var removedAsset in assets) {
+                var index = SelectedArray.IndexOf(removedAsset);
+                if (index > -1) 
+                {
+                    SelectedArray.RemoveAt(index);
+                    SelectedMap.Remove(removedAsset.LocalIdentifier);
+                }
+            }
+            //CollectionView.DeleteItems(indexPaths);
+            CollectionView.ReloadData();
+            UpdateSelectionCount();
+            UpdateNavigationStatus();
+            UpdateFooter();
         }
 
         public void UpdatedAlbums(AssetsManager manager, PHAssetCollection[] albums, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+
         }
 
         public void UpdatedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            //CollectionView.ReloadItems(indexPaths);
+            CollectionView.ReloadData();
+            UpdateNavigationStatus();
+            UpdateFooter();
         }
     }
 

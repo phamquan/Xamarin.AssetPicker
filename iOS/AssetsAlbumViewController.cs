@@ -336,17 +336,14 @@ namespace AssetsPicker.iOS
 
         public void InsertedAlbums(AssetsManager manager, PHAssetCollection[] albums, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            CollectionView.InsertItems(indexPaths);
         }
 
-        public void InsertedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
-        {
-            throw new NotImplementedException();
-        }
+        public void InsertedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths) { }
 
         public void ReloadedAlbum(AssetsManager manager, PHAssetCollection album, NSIndexPath indexPath)
         {
-            throw new NotImplementedException();
+            CollectionView.ReloadSections(NSIndexSet.FromIndex(indexPath.Section));
         }
 
         public void ReloadedAlbumsInSection(AssetsManager manager, int section)
@@ -356,23 +353,17 @@ namespace AssetsPicker.iOS
 
         public void RemovedAlbums(AssetsManager manager, PHAssetCollection[] albums, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            CollectionView.DeleteItems(indexPaths);
         }
 
-        public void RemovedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
-        {
-            throw new NotImplementedException();
-        }
+        public void RemovedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths) { }
 
         public void UpdatedAlbums(AssetsManager manager, PHAssetCollection[] albums, NSIndexPath[] indexPaths)
         {
-            throw new NotImplementedException();
+            CollectionView.ReloadItems(indexPaths);
         }
 
-        public void UpdatedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths)
-        {
-            throw new NotImplementedException();
-        }
+        public void UpdatedAssets(AssetsManager manager, PHAsset[] assets, NSIndexPath[] indexPaths) { }
     }
 
     #endregion
